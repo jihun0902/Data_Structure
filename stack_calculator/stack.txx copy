@@ -1,0 +1,56 @@
+//
+// Assignment 2 : Simple calculator using Stack
+//
+// Array-based stack data structure
+//
+// COSE213 Spring 2021
+//
+
+template<class type>
+Stack<type>::~Stack()
+{
+	// ToDo
+	delete[] array;
+}
+
+template<class type>
+type& Stack<type>::Top()
+{
+	// ToDo
+	if (IsEmpty()) {printf("top of empty stack \n");}
+	return array[top];
+}
+
+template<class type>
+void Stack<type>::Push(const type& item)
+{
+	// ToDo
+	if (Size() == capacity) {
+	type* temp = new type[capacity*2];
+	for(int i=0; i < capacity; i++) {
+	temp[i] = array[i];}
+	delete[] array;
+	capacity = capacity*2;
+
+	type* array = new type[capacity];
+	for(int j=0; j < capacity/2; j++) {
+	array[j] = temp[j];}
+	delete[] temp;
+	}
+	array[++top] = item;
+}
+
+template<class type>
+void Stack<type>::Pop()
+{
+	// ToDo
+	if (IsEmpty()) {printf("stack is empty\n");}
+	else {--top;}
+}
+
+template<class type>
+bool Stack<type>::IsEmpty() const
+{
+	// ToDo
+	return (top<0);
+}

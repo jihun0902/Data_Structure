@@ -1,0 +1,231 @@
+/** 
+  * Assignment 3 for COSE213 Data Structures
+  *
+  * Won-Ki Jeong (wkjeong@korea.ac.kr)
+  *
+  * 2021. 5. 9
+
+  */
+
+// destructor
+template <class HashMapElemType>
+HashMap<HashMapElemType>::~HashMap() 
+{
+	// ToDo
+	for (int i=0; i < capacity; i++) {
+	    delete ht[i];
+	}
+}
+	
+template <class HashMapElemType>
+HashMapElemType* 
+HashMap<HashMapElemType>::find(const KeyType k) 
+{ 
+	// ToDo
+	int ind = hashfunction(k);
+	if (ht[ind]==NULL)
+	{
+	    return NULL;
+	}
+	else
+	{
+	    if(ht[ind]->key == k)
+	    {
+	        return ht[ind];
+	    }
+	    else
+	    {
+	        HashMapElemType* Ptr = ht[ind];
+            while(Ptr->link != NULL)
+            {
+                if(Ptr->key == k)
+                {
+                    return Ptr;
+                }
+                Ptr = Ptr->link;
+            }
+            if(Ptr->key == k)
+            {
+                return Ptr;
+            }
+            else
+            {
+                return NULL;
+            }
+	    }
+	}
+}
+	
+template <class HashMapElemType>
+void 
+HashMap<HashMapElemType>::insert(const KeyType k, const ValType v) 
+{
+	// ToDo
+	int index = hashfunction(k);
+
+	if(ht[index] == NULL)
+	{
+	    ht[index] = new HashMapElemType;
+	    ht[index]->key = k;
+	    ht[index]->val = v;
+	    ht[index]->link = NULL;
+	    mapsize++;
+	}
+	else
+	{
+	    if(ht[index]->key == k)
+	    {
+	        ht[index]->val = v;
+	    }
+	    else
+	    {
+	        HashMapElemType* Ptr = ht[index];
+            HashMapElemType* n = new HashMapElemType;
+            n->key = k;
+            n->val = v;
+            n->link = NULL;
+
+            while(Ptr->link != NULL)
+            {
+                if (Ptr->key == k)
+                {
+                    Ptr->val = v;
+                    return;
+                }
+                Ptr = Ptr->link;
+            }
+            Ptr->link = n;
+            mapsize++;
+	    }
+	}
+}
+		
+template <class HashMapElemType>
+bool 
+HashMap<HashMapElemType>::remove(const KeyType k) 
+{
+	// ToDo
+	int ind = hashfunction(k);
+	if(ht[ind] == NULL)
+	{
+	    return false;
+	}
+	else
+	{
+	    HashMapElemType* tmp = ht[ind];
+
+	    if(ht[ind]->key == k)
+	    {
+	        ht[ind] = tmp->link;
+	        mapsize --;
+	        return true;
+	    }
+	    else
+	    {
+	        while(tmp->link->link != NULL)
+            {
+                if(tmp->link->key == k)
+                {
+                    tmp->link = tmp->link->link;
+                    mapsize --;
+                    return true;
+                }
+                tmp = tmp->link;
+            }
+            return true;
+	    }
+	}
+}
+	
+template <class HashMapElemType>
+unsigned int 
+HashMap<HashMapElemType>::hashfunction(const KeyType k)
+{
+	// ToDo	
+	int hash_val = 0;
+    for (int i = 0; i<k.length(); i++)
+    {
+        hash_val += (int) k[i];
+    }
+    hash_val %= divisor;
+
+	return hash_val;
+}
+
+template <class HashMapElemType>
+void 
+HashMap<HashMapElemType>::print()
+{
+	// ToDo
+    std::string keys[mapsize];
+	ValType max_v2 = 9999;
+	for(int j=0; j<mapsize; j++)
+	{
+	    KeyType max_k;
+	    ValType max_v = 0;
+
+	    for(int i=0; i<capacity; i++)
+	    {
+	        HashMapElemType* Ptr = ht[i];
+	        if(Ptr != NULL)
+	        {
+	            if(Ptr->link != NULL)
+	            {
+                    int cnt = 0;
+                    for(int k=0; k<mapsize; k++)
+                    {
+                        if(Ptr->key == keys[k])
+                        {
+                            cnt +=1;
+                        }
+                    }
+                    if ((Ptr->val > max_v) && (Ptr->val <= max_v2) && (cnt==0))
+                    {
+                        max_k = Ptr->key;
+                        max_v = Ptr->val;
+                    }
+                    else
+                    {
+                        while(Ptr->link != NULL)
+                        {
+                            Ptr = Ptr->link;
+                            int cnt = 0;
+                            for(int k=0; k<mapsize; k++)
+                            {
+                                if(Ptr->key == keys[k])
+                                {
+                                    cnt +=1;
+                                }
+                            }
+
+                            if ((Ptr->val > max_v) && (Ptr->val <= max_v2) && (cnt==0))
+                            {
+                                max_k = Ptr->key;
+                                max_v = Ptr->val;
+                            }
+                        }
+                    }
+	            }
+	            else
+	            {
+	                int cnt = 0;
+                    for(int k=0; k<mapsize; k++)
+                    {
+                        if(Ptr->key == keys[k])
+                        {
+                            cnt +=1;
+                        }
+                    }
+	                if ((Ptr->val > max_v) && (Ptr->val <= max_v2) && (cnt==0))
+                    {
+                        max_k = Ptr->key;
+                        max_v = Ptr->val;
+                    }
+	            }
+	        }
+	    }
+        max_v2 = max_v;
+        keys[j] = max_k;
+        std::cout << max_k << " : " << max_v << std::endl;
+	}
+}
